@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Grouped row chart</title>
+
+  <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+  <script type="text/javascript" src="grouped-row-chart.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.7/d3-tip.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <link rel="stylesheet" href="main.css">
+
+  <script>
+        document.onreadystatechange = function () {
+            if (document.readyState == "complete") {
+                initChart();
+            }
+        };
+
+        function createRandomData() {
+            var varNames = ["XXL-VLDL-L", "XL-VLDL-L", "L-VLDL-L", "M-VLDL-L", "S-VLDL-L", "XS-VLDL-L", "IDL-L", "L-LDL-L", "M-LDL-L", "S-LDL-L", "XL-HDL-L", "L-HDL-L", "M-HDL-L", "S-HDL-L"];
+            var groups = ['groupA', 'groupB'];
+            return _.map(varNames, function(v) {
+                return {
+                    'name': v,
+                    groups: _.map(groups, function(g) {
+                        return {
+                            'name': g,
+                            'value': _.chain(_.range(-10,10)).sample().value()
+                        };
+                    })
+                };
+            });
+        }
+
+        function initChart() {
+            var element = d3.select('.wrapper')[0][0];
+
+            var randomData = createRandomData();
+
+            var tooltip = function(d) {
+                return [
+                "<strong>Variable</strong>: " + "<span class='tooltip-val'>" + d.name + "</span>",
+                "<strong>Value</strong>: " + "<span class='tooltip-val'>" + d.value + "</span>"
+                ].join("<br/>")
+              };
+
+              window.chart = new GroupedRowChart()
+              .element(element)
+              .width(500)
+              .height(700)
+              .margins({
+                  top: 10,
+                  right: 40,
+                  bottom: 10,
+                  left: 30
+              })
+              .yAxisLabel("Y axis label")
+              .xAxisLabel("X axis label")
+              .tooltip(tooltip)
+              .colors(d3.scale.category10())
+              .colorAccessor(function(d, colorScale) {
+                return colorScale(d.name || d);
+              })
+              .data(randomData)//drawData)
+              // .groupSort(function(a, b) {
+              //   if(a.name < b.name) { return 1; }
+              //   if(a.name > b.name) { return -1; }
+              //   return 0;
+              // })
+              .onClick(function(d) {
+                console.log("element", d, "clicked");
+              })
+              .render();
+
+        }
+
+        setInterval(function() {
+            var randomData = createRandomData();
+
+            window.chart
+            .data(randomData)
+            .render();
+        }, 5000);
+
+  </script>
+
+</head>
+
+<body>
+  <div class="wrapper"></div>
+</body>
+
+</html>
