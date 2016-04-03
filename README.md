@@ -1,7 +1,7 @@
 
 Grouped-row-chart
 =====
-Grouped row chart implemented D3.js.
+Grouped row chart implemented using D3.js.
 
 ## Dependencies
 * Underscore / Lodash
